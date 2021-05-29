@@ -20,8 +20,8 @@ const User = mongoose.model('User', {
     type: String,
     required: true,
     unique: true,
-    minlength: [5, 'Minimum length is 5 characters'],
-    maxlength: [20, 'Maximum length is 20 characters']
+    //minlength: [5, 'Minimum length is 5 characters'],
+    //maxlength: [20, 'Maximum length is 20 characters']
   },
   password: {
     type: String,
@@ -81,7 +81,7 @@ app.post('/secret', async (req, res) => {
 // LOGIN
 app.post('/signin', async (req, res) => {
   const { username, password } = req.body
-
+console.log(user)
   try {
     const user = await User.findOne({ username })
 
