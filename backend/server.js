@@ -21,7 +21,7 @@ const User = mongoose.model('User', {
     required: true,
     unique: true,
     minlength: [5, 'Minimum length is 5 characters'],
-    maxlength: [140, 'Maximum length is 140 characters']
+    maxlength: [20, 'Maximum length is 20 characters']
   },
   password: {
     type: String,
@@ -43,9 +43,9 @@ const authenticateUSer = async (req, res, next) => {
   try {
     const user = await User.findOne({ accessToken })
     if (user) {
-      next()
+      next() // next function means that if user exists, go to the endpoint
     } else {
-      res.status(401).json({ message: 'Not authorized'})
+      res.status(401).json({ message: 'Not authenticated'})
     }
   } catch (error) {
     res.status(400).json({ message: 'Invalid request', error })
@@ -54,13 +54,14 @@ const authenticateUSer = async (req, res, next) => {
 
 app.use(cors())
 app.use(express.json())
+//app.use(authenticateUSer) this would make all endpoints accessible only with accesstoken
 
 // Routes
 app.get('/', (req, res) => {
   res.send('Hello world')
 })
 
-//app.get('/secret', authenticateUSer)
+app.get('/secret', authenticateUSer)
 app.get('/secret', async (req, res) => {
   const secrets = await Secret.find()
   res.json(secrets)
