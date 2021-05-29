@@ -2,7 +2,7 @@ import express from 'express'
 import cors from 'cors'
 import mongoose from 'mongoose'
 import crypto from 'crypto'
-import bcrypt from 'bcrypt-nodejs'
+import bcrypt from 'bcrypt'
 import dotenv from 'dotenv'
 
 dotenv.config()
@@ -10,6 +10,10 @@ dotenv.config()
 const mongoUrl = process.env.MONGO_URL || "mongodb://localhost/authAPI"
 mongoose.connect(mongoUrl, { useNewUrlParser: true, useUnifiedTopology: true, useCreateIndex: true })
 mongoose.Promise = Promise
+
+const Secret = mongoose.model('Secret', {
+  message: String
+})
 
 const User = mongoose.model('User', {
   username: {
@@ -22,7 +26,7 @@ const User = mongoose.model('User', {
   password: {
     type: String,
     required: true,
-    minlength: [5, 'Minimum length is 5 characters']
+    //minlength: [5, 'Minimum length is 5 characters']
   },
   accessToken: {
     type: String,
@@ -56,9 +60,21 @@ app.get('/', (req, res) => {
   res.send('Hello world')
 })
 
-app.get('/secret', authenticateUSer)
+//app.get('/secret', authenticateUSer)
 app.get('/secret', async (req, res) => {
-  res.json(secret)
+  const secrets = await Secret.find()
+  res.json(secrets)
+})
+
+app.post('/secret', async (req, res) => {
+  const { message } = req.body
+
+  try {
+    const newSecret = await new Secret({ message }).save()
+    res.json(newSecret)
+  } catch (error) {
+    res.status(400).json({ message: 'Invalid request', error })
+  }
 })
 
 // LOGIN
