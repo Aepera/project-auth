@@ -20,7 +20,7 @@ export const App = () => {
     <BrowserRouter>
       <Provider store={store}>
         <Switch>
-          <Route path='/' exact component={SecretPage} />
+          <Route path='/secret' exact component={SecretPage} />
           <Route path='/signin' exact component={LoginPage} />
           <Route path='/signup' exact component={SignupPage} />
         </Switch>
